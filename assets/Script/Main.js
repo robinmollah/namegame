@@ -52,9 +52,7 @@ cc.Class({
     },
 
     toggleState : function(event, customEventData){
-
-
-        var stateFactor = this.GameState === MoveState.Left ? 1 : -1; // TODO retrieve the enum value
+        var stateFactor = this.GameState === MoveState.Left ? -1 : 1; // TODO retrieve the enum value
 
         var onesIndex = this.node.children.indexOf(event.target);
         var anothersIndex = onesIndex + stateFactor;
@@ -83,12 +81,21 @@ cc.Class({
     shuffleLetters: function () {
         var i;
         var n = this.node.childrenCount - 1;
-        for(i = 0; i < n; i++){
+        for(i = 0; i < n + 1; i++){
             var randomLetter = i + (Math.random() * (n - i));
+            if(i === n) randomLetter = Math.random() * n - 1;
+            randomLetter = parseInt(randomLetter);
+            cc.log("Random Letter : " + randomLetter);
             // swap
             var tmp = this.node.children[i];
-            this.node.children[i] = this.node.children[randomLetter];
+            var tmp2 = this.node.children[randomLetter]; // TODO optimize this swap
+            this.node.children[i] = tmp2;
             this.node.children[randomLetter] = tmp;
         }
+
+        this.node.children.forEach(this.setButtonPositions);
     },
+    setButtonPositions: function (item, index) {
+        item.setPosition(buttonGap * (index - 2), 0);
+    }
 });
